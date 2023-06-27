@@ -13,7 +13,7 @@ This agent detects the bots that are deployed by the Nethermind team.
 Describe each of the type of alerts fired by this agent
 
 - FORTA-1
-  - Fired when a transaction contains a Tether transfer over 10,000 USDT
+  - Fired when a transaction related to forta bot deployment/updates from Nethermind
   - Severity is always set to "info"
   - Type is always set to "info"
   - Metada fields will be mentioned here.
