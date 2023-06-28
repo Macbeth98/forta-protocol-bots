@@ -45,7 +45,7 @@ Alerts fired by this bot
 
 - FORTA-4
   - Fired when a forta bot owned by Nethermind is `Disbaled`
-    Severity is always set to "info"
+  - Severity is always set to "info"
   - Type is always set to "info"
   - Metadata contains:
     - `agentId`: The unique identifier for the bot
