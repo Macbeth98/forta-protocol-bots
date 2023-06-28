@@ -1,10 +1,10 @@
 import { Finding, TransactionEvent, FindingSeverity, FindingType, getEthersProvider } from 'forta-agent';
 
 import { swapEvent, uniswapV3FactoryAddress } from './uniswapABI';
-import { JsonRpcProvider } from '@ethersproject/providers';
+import { Provider } from '@ethersproject/providers';
 import { isUniswapPoolAddress } from './utils';
 
-function provideHandleTransaction(factoryAddress: string, swapEvent: string, provider: JsonRpcProvider) {
+export function provideHandleTransaction(factoryAddress: string, swapEvent: string, provider: Provider) {
   return async function handleTransaction(txEvent: TransactionEvent) {
     const findings: Finding[] = [];
 
