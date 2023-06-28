@@ -44,7 +44,7 @@ Alerts fired by this bot
     - `permission`: The permission level of the bot
 
 - FORTA-4
-  - Fired when a forta bot owned by Nethermind is `Disbaled`
+  - Fired when a forta bot owned by Nethermind is `Disabled`
   - Severity is always set to "info"
   - Type is always set to "info"
   - Metadata contains:
