@@ -59,4 +59,4 @@ The agent behaviour can be verified with the following transactions:
 - 0xca8355b309f8df12e720b0ac9f8bc38edfb3204748e9c29d769401daf2ee9d6c (CreateAgent)
 - 0x3c11b0f44725e73a80f43c1a4e5902cef590e970c4d0103834c9fb5f34c7faec (UpdateAgent)
 - 0x04b729f62b46c604015dbeb7df9d5e9d92444c1c3dc76613480f3f31bdd9ff1f (EnableAgent)
-- 0x9a41dc67848f1852b2af7e84c6901928de349bab62430ae79d824478ad42bb7f (DisbaleAgent)
+- 0x9a41dc67848f1852b2af7e84c6901928de349bab62430ae79d824478ad42bb7f (DisableAgent)
