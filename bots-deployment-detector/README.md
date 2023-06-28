@@ -15,7 +15,7 @@ Alerts fired by this bot
 
 - FORTA-1
 
-  - Fired when a forta bot is deployed by Nethermind
+  - Fired when a forta bot is `deployed` by Nethermind
   - Severity is always set to "info"
   - Type is always set to "info"
   - Metadata contains:
@@ -25,7 +25,7 @@ Alerts fired by this bot
 
 - FORTA-2
 
-  - Fired when a forta bot owned by Nethermind is updated/upgraded
+  - Fired when a forta bot owned by Nethermind is `updated/upgraded`
   - Severity is always set to "info"
   - Type is always set to "info"
   - Metadata contains:
@@ -35,7 +35,7 @@ Alerts fired by this bot
 
 - FORTA-3
 
-  - Fired when a forta bot owned by Nethermind is Enabled
+  - Fired when a forta bot owned by Nethermind is `Enabled`
   - Severity is always set to "info"
   - Type is always set to "info"
   - Metadata contains:
@@ -44,7 +44,7 @@ Alerts fired by this bot
     - `permission`: The permission level of the bot
 
 - FORTA-4
-  - Fired when a forta bot owned by Nethermind is Disbaled
+  - Fired when a forta bot owned by Nethermind is `Disbaled`
     Severity is always set to "info"
   - Type is always set to "info"
   - Metadata contains:
