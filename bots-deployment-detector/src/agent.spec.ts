@@ -119,7 +119,7 @@ describe('Bot Deployment Detector Agent', () => {
 
       const findings = await handleTransaction(txEvent);
 
-      expect(findings).toEqual([
+      expect(findings).toStrictEqual([
         Finding.fromObject({
           ...findingAgentInputs.enable,
           ...findingType,
@@ -137,7 +137,7 @@ describe('Bot Deployment Detector Agent', () => {
 
       const findings = await handleTransaction(txEvent);
 
-      expect(findings).toEqual([
+      expect(findings).toStrictEqual([
         Finding.fromObject({
           ...findingAgentInputs.disable,
           ...findingType,
