@@ -1,8 +1,8 @@
-# Nethermind Bots Deployment Detector.
+# Nethermind Bots Detector.
 
 ## Description
 
-This forta bot detects the bots that are deployed by the Nethermind team. The bot also detects any updates to a bot from Nethermind.
+This forta bot detects the bots that are deployed by the Nethermind team. The bot also detects any updates to a bot including enabling and disabling of a bot from Nethermind.
 Nethemind Bot Deployer Address: 0x88dC3a2284FA62e0027d6D6B1fCfDd2141a143b8
 
 ## Supported Chains
@@ -14,10 +14,43 @@ Nethemind Bot Deployer Address: 0x88dC3a2284FA62e0027d6D6B1fCfDd2141a143b8
 Alerts fired by this bot
 
 - FORTA-1
-  - Fired when a transaction related to forta bot deployment/updates from Nethermind
+
+  - Fired when a forta bot is deployed by Nethermind
   - Severity is always set to "info"
   - Type is always set to "info"
-  - Metadata fields consits of agentId and type. The type can be of AgentCreated, AgentUpdated, AgentEnabled, and AgentDisabled depending on the Bot Transaction.
+  - Metadata contains:
+    - `agentId`: The unique identifier for the bot
+    - `by`: Owner of the bot
+    - `chainIds`: The blockchain networks that the bot is configured to scan
+
+- FORTA-2
+
+  - Fired when a forta bot owned by Nethermind is updated/upgraded
+  - Severity is always set to "info"
+  - Type is always set to "info"
+  - Metadata contains:
+    - `agentId`: The unique identifier for the bot
+    - `by`: Owner of the bot
+    - `chainIds`: The blockchain networks that the bot is configured to scan
+
+- FORTA-3
+
+  - Fired when a forta bot owned by Nethermind is Enabled
+  - Severity is always set to "info"
+  - Type is always set to "info"
+  - Metadata contains:
+    - `agentId`: The unique identifier for the bot
+    - `enabled`: Signifies that the bot is enabled (true)
+    - `permission`: The permission level of the bot
+
+- FORTA-4
+  - Fired when a forta bot owned by Nethermind is Disbaled
+    Severity is always set to "info"
+  - Type is always set to "info"
+  - Metadata contains:
+    - `agentId`: The unique identifier for the bot
+    - `enabled`: Signifies that the bot is enabled (true)
+    - `permission`: The permission level of the bot
 
 ## Test Data
 
