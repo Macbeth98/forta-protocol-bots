@@ -10,17 +10,39 @@ export const eventAgentEnabled =
 export const functionCreateAgent =
   'function createAgent(uint256 agentId, address owner, string metadata, uint256[] chainIds) public';
 
-export const createAgentABI = [
-  {
-    inputs: [
-      { internalType: 'uint256', name: 'agentId', type: 'uint256' },
-      { internalType: 'address', name: '', type: 'address' },
-      { internalType: 'string', name: 'metadata', type: 'string' },
-      { internalType: 'uint256[]', name: 'chainIds', type: 'uint256[]' },
-    ],
-    name: 'createAgent',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-];
+export interface FindingAgentInput {
+  name: string;
+  description: string;
+  alertId: string;
+}
+
+const createAgentInput: FindingAgentInput = {
+  name: 'Bot Deployment Detector',
+  description: 'Bot deployment detected',
+  alertId: 'FORTA-1',
+};
+
+const updateAgentInput: FindingAgentInput = {
+  name: 'Bot Updates Detector',
+  description: 'Bot update/upgrade detected',
+  alertId: 'FORTA-2',
+};
+
+const enableAgentInput: FindingAgentInput = {
+  name: 'Enable Bot Detector',
+  description: 'Detects whenever a bot is enabled',
+  alertId: 'FORTA-3',
+};
+
+const disableAgentInput: FindingAgentInput = {
+  name: 'Disable Bot Detector',
+  description: 'Detects whenever a bot is disabled',
+  alertId: 'FORTA-4',
+};
+
+export const findingAgentInputs = {
+  create: createAgentInput,
+  update: updateAgentInput,
+  enable: enableAgentInput,
+  disable: disableAgentInput,
+};

@@ -6,6 +6,8 @@ import {
   eventAgentUpdated,
   eventAgentEnabled,
   functionCreateAgent,
+  findingAgentInputs,
+  FindingAgentInput,
 } from './utils';
 
 export function provideHandleTransaction(deployerAddress: string, contractAddress: string): HandleTransaction {
@@ -24,28 +26,33 @@ export function provideHandleTransaction(deployerAddress: string, contractAddres
       const { agentId, by, chainIds } = log.args;
       const { name } = log;
 
-      let eventType = name;
+      let findingInput: FindingAgentInput;
+
+      let metadataInput;
 
       if (name === 'AgentUpdated') {
-        if (fn.length > 0) {
-          eventType = 'AgentCreated';
-        }
-      } else if (name === 'AgentEnabled') {
-        eventType = log.args.enabled ? 'AgentEnabled' : 'AgentDisabled';
+        findingInput = fn.length > 0 ? findingAgentInputs.create : findingAgentInputs.update;
+        metadataInput = {
+          by,
+          chainIds: chainIds.map((id: ethers.BigNumber) => id.toString()).join(','),
+        };
+      } else {
+        // => name = 'AgentEnabled'
+        findingInput = log.args.enabled ? findingAgentInputs.enable : findingAgentInputs.disable;
+        metadataInput = {
+          enabled: log.args.enabled.toString(),
+          permission: log.args.permission.toString(),
+        };
       }
 
       findings.push(
         Finding.fromObject({
-          name: 'Bot Deployment Detector',
-          description: 'Bot deployment/upgrade detected',
-          alertId: 'FORTA-1',
+          ...findingInput,
           severity: FindingSeverity.Info,
           type: FindingType.Info,
           metadata: {
             agentId: agentId.toString(),
-            type: eventType,
-            by,
-            chainIds: chainIds ? chainIds.map((id: ethers.BigNumber) => id.toString()).join(',') : undefined,
+            ...metadataInput,
           },
         })
       );
