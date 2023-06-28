@@ -5,7 +5,7 @@ import { Finding, FindingSeverity, FindingType, HandleTransaction } from 'forta-
 import { createAddress } from 'forta-agent-tools';
 import { TestTransactionEvent } from 'forta-agent-tools/lib/test';
 
-import { eventAgentEnabled, eventAgentUpdated, functionCreateAgent } from './utils';
+import { eventAgentEnabled, eventAgentUpdated, findingAgentInputs, functionCreateAgent } from './utils';
 
 describe('Bot Deployment Detector Agent', () => {
   let handleTransaction: HandleTransaction;
@@ -64,10 +64,7 @@ describe('Bot Deployment Detector Agent', () => {
       const enableInputs = [mockAgentId, true, 1, true];
       const disableInputs = [mockAgentId, false, 1, false];
 
-      const findingInput = {
-        name: 'Bot Deployment Detector',
-        description: 'Bot deployment/upgrade detected',
-        alertId: 'FORTA-1',
+      const findingType = {
         severity: FindingSeverity.Info,
         type: FindingType.Info,
       };
@@ -84,10 +81,10 @@ describe('Bot Deployment Detector Agent', () => {
 
         expect(findings).toStrictEqual([
           Finding.fromObject({
-            ...findingInput,
+            ...findingAgentInputs.update,
+            ...findingType,
             metadata: {
               agentId: mockAgentId,
-              type: eventTypes[1],
               by: mockDeployerAdddress,
               chainIds: mockChainId.toString(),
             },
@@ -109,10 +106,10 @@ describe('Bot Deployment Detector Agent', () => {
 
         expect(findings).toStrictEqual([
           Finding.fromObject({
-            ...findingInput,
+            ...findingAgentInputs.create,
+            ...findingType,
             metadata: {
               agentId: mockAgentId,
-              type: eventTypes[0],
               by: mockDeployerAdddress,
               chainIds: mockChainId.toString(),
             },
@@ -127,10 +124,12 @@ describe('Bot Deployment Detector Agent', () => {
 
         expect(findings).toEqual([
           Finding.fromObject({
-            ...findingInput,
+            ...findingAgentInputs.enable,
+            ...findingType,
             metadata: {
               agentId: mockAgentId,
-              type: eventTypes[2],
+              enabled: 'true',
+              permission: '1',
             },
           }),
         ]);
@@ -143,10 +142,12 @@ describe('Bot Deployment Detector Agent', () => {
 
         expect(findings).toEqual([
           Finding.fromObject({
-            ...findingInput,
+            ...findingAgentInputs.disable,
+            ...findingType,
             metadata: {
               agentId: mockAgentId,
-              type: eventTypes[3],
+              enabled: 'false',
+              permission: '1',
             },
           }),
         ]);
