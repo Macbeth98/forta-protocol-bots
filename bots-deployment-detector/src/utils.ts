@@ -30,13 +30,13 @@ const updateAgentInput: FindingAgentInput = {
 
 const enableAgentInput: FindingAgentInput = {
   name: 'Enable Bot Detector',
-  description: 'Detects whenever a bot is enabled',
+  description: 'Bot Enabled detected',
   alertId: 'FORTA-3',
 };
 
 const disableAgentInput: FindingAgentInput = {
   name: 'Disable Bot Detector',
-  description: 'Detects whenever a bot is disabled',
+  description: 'Bot Disabled detected',
   alertId: 'FORTA-4',
 };
 
