@@ -1,11 +1,11 @@
 import { provideHandleTransaction } from './agent';
 
-import { Finding, FindingSeverity, FindingType, HandleTransaction, ethers } from 'forta-agent';
+import { Finding, FindingSeverity, FindingType, HandleTransaction } from 'forta-agent';
 
 import { createAddress } from 'forta-agent-tools';
 import { TestTransactionEvent } from 'forta-agent-tools/lib/test';
 
-import { eventAgentEnabled, eventAgentUpdated, createAgentABI } from './utils';
+import { eventAgentEnabled, eventAgentUpdated, functionCreateAgent } from './utils';
 
 describe('Bot Deployment Detector Agent', () => {
   let handleTransaction: HandleTransaction;
@@ -43,12 +43,13 @@ describe('Bot Deployment Detector Agent', () => {
       it('ignores a transaction that is from a deployer Address and bot deployment but to a different bot registry/contract', async () => {
         const txEvent = new TestTransactionEvent();
         txEvent.setFrom(mockDeployerAdddress).setTo(mockRandomAddress);
-        txEvent.addEventLog(eventAgentUpdated, mockRandomAddress, [
-          mockAgentId,
-          mockDeployerAdddress,
-          '',
-          [mockChainId],
-        ]);
+
+        txEvent.addTraces({
+          function: functionCreateAgent,
+          from: mockDeployerAdddress,
+          to: mockRandomAddress,
+          arguments: [mockAgentId, mockDeployerAdddress, '', [mockChainId]],
+        });
 
         const findings = await handleTransaction(txEvent);
 
@@ -97,16 +98,12 @@ describe('Bot Deployment Detector Agent', () => {
       it('returns a finding with metadata.type: "AgentCreated" when transaction is from deployer for the deployment of the bot', async () => {
         txEvent.addEventLog(eventAgentUpdated, mockContractAddress, updateInputs);
 
-        const methodInterface = new ethers.utils.Interface(createAgentABI);
-
-        const Tdata = methodInterface.encodeFunctionData('createAgent', [
-          mockAgentId,
-          mockDeployerAdddress,
-          '',
-          [mockChainId],
-        ]);
-
-        txEvent.setData(Tdata);
+        txEvent.addTraces({
+          function: functionCreateAgent,
+          arguments: [mockAgentId, mockDeployerAdddress, '', [mockChainId]],
+          from: mockDeployerAdddress,
+          to: mockContractAddress,
+        });
 
         const findings = await handleTransaction(txEvent);
 
