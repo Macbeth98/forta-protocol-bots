@@ -1,5 +1,24 @@
-export const swapEvent =
-  'event Swap (address indexed sender, address indexed recipient, int256 amount0, int256 amount1, uint160 sqrtPriceX96, uint128 liquidity, int24 tick)';
-// 'event Swap(address indexed sender, uint amount0In, uint amount1In, uint amount0Out, uint amount1Out, address indexed to)';
+import { ethers } from 'forta-agent';
 
-export const uniswapV3Address = '0x1F98431c8aD98523631AE4a59f267346ea31F984';
+import { pool_init_hash_code, uniswapPoolABI } from './uniswapABI';
+import { JsonRpcProvider } from '@ethersproject/providers';
+
+const getPoolValues = async (poolAddress: string, provider: JsonRpcProvider) => {
+  const poolContract = new ethers.Contract(poolAddress, uniswapPoolABI, provider);
+  const poolValues: any[] = await Promise.all([poolContract.token0(), poolContract.token1(), poolContract.fee()]);
+
+  return poolValues;
+};
+
+const computePoolAddress = async (factoryAddress: string, poolValues: any[]) => {
+  const encodedData = ethers.utils.defaultAbiCoder.encode(['address', 'address', 'uint24'], poolValues);
+  const salt = ethers.utils.solidityKeccak256(['bytes'], [encodedData]);
+  const poolAddress = ethers.utils.getCreate2Address(factoryAddress, salt, pool_init_hash_code);
+  return poolAddress;
+};
+
+export const isUniswapPoolAddress = async (factoryAddress: string, poolAddress: string, provider: JsonRpcProvider) => {
+  const poolValues = await getPoolValues(poolAddress, provider);
+  const computedPoolAddress = await computePoolAddress(factoryAddress, poolValues);
+  return computedPoolAddress.toLowerCase() === poolAddress.toLowerCase();
+};
