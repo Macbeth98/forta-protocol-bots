@@ -3,7 +3,7 @@
 ## Description
 
 This forta bot detects the bots that are deployed by the Nethermind team. The bot also detects any updates to a bot including enabling and disabling of a bot from Nethermind.
-Nethemind Bot Deployer Address: 0x88dC3a2284FA62e0027d6D6B1fCfDd2141a143b8
+Nethemind Bot Deployer Address: `0x88dC3a2284FA62e0027d6D6B1fCfDd2141a143b8`
 
 ## Supported Chains
 
@@ -54,7 +54,7 @@ Alerts fired by this bot
 
 ## Test Data
 
-The agent behaviour can be verified with the following transactions:
+The Forta Bot behaviour can be verified with the following transactions:
 
 - 0xca8355b309f8df12e720b0ac9f8bc38edfb3204748e9c29d769401daf2ee9d6c (CreateAgent)
 - 0x3c11b0f44725e73a80f43c1a4e5902cef590e970c4d0103834c9fb5f34c7faec (UpdateAgent)
