@@ -12,7 +12,7 @@ export function provideHandleTransaction(factoryAddress: string, swapEvent: stri
 
     for (const log of logs) {
       const poolAddress = log.address;
-      const isUniswapPool = await isUniswapPoolAddress(factoryAddress, poolAddress, provider);
+      const isUniswapPool = await isUniswapPoolAddress(factoryAddress, poolAddress, provider, txEvent.blockNumber);
       if (!isUniswapPool) {
         continue;
       }
