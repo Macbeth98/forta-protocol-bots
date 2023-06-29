@@ -1,10 +1,10 @@
 {
   "name": "uniswap-bot",
   "version": "0.0.1",
-  "description": "This Forta Bot detects any swaps that are executed on Uniswap.",
-  "repository": "https://github.com/forta-network/forta-bot-sdk/tree/master/starter-project",
+  "description": "This Forta Bot detects any swaps that are executed on Uniswap V3 protocol.",
+  "repository": "https://github.com/Macbeth98/forta-bots/tree/master/uniswap-bot",
   "chainIds": [
-    1
+    1, 42161, 10, 137
   ],
   "scripts": {
     "build": "tsc",
