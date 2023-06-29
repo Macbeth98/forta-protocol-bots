@@ -28,6 +28,7 @@ export function provideHandleTransaction(factoryAddress: string, swapEvent: stri
           type: FindingType.Info,
           protocol: 'UniswapV3',
           metadata: {
+            poolAddress: poolAddress.toLowerCase(),
             sender,
             recipient,
             amount0: amount0.toString(),
