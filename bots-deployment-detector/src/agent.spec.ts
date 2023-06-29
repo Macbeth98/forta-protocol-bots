@@ -5,7 +5,7 @@ import { Finding, FindingSeverity, FindingType, HandleTransaction } from 'forta-
 import { createAddress } from 'forta-agent-tools';
 import { TestTransactionEvent } from 'forta-agent-tools/lib/test';
 
-import { eventAgentEnabled, eventAgentUpdated, findingAgentInputs, functionCreateAgent } from './utils';
+import { eventAgentEnabled, findingAgentInputs, functionCreateAgent, functionUpdateAgent } from './utils';
 
 describe('Bot Deployment Detector Agent', () => {
   let handleTransaction: HandleTransaction;
@@ -54,7 +54,6 @@ describe('Bot Deployment Detector Agent', () => {
       expect(findings).toStrictEqual([]);
     });
 
-    // Setup for returns a finding.
     let txEvent: TestTransactionEvent;
 
     const updateInputs = [mockAgentId, mockDeployerAdddress, '', [mockChainId]];
@@ -72,7 +71,12 @@ describe('Bot Deployment Detector Agent', () => {
     });
 
     it('returns a finding with metadata.type: "AgentUpdated" when the transaction is from deployer to update/upgrade of a bot', async () => {
-      txEvent.addEventLog(eventAgentUpdated, mockContractAddress, updateInputs);
+      txEvent.addTraces({
+        function: functionUpdateAgent,
+        arguments: [mockAgentId, '', [mockChainId]],
+        from: mockDeployerAdddress,
+        to: mockContractAddress,
+      });
 
       const findings = await handleTransaction(txEvent);
 
@@ -90,8 +94,6 @@ describe('Bot Deployment Detector Agent', () => {
     });
 
     it('returns a finding with metadata.type: "AgentCreated" when transaction is from deployer for the deployment of the bot', async () => {
-      txEvent.addEventLog(eventAgentUpdated, mockContractAddress, updateInputs);
-
       txEvent.addTraces({
         function: functionCreateAgent,
         arguments: [mockAgentId, mockDeployerAdddress, '', [mockChainId]],
