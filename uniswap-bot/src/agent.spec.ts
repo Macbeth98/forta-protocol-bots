@@ -93,6 +93,7 @@ describe('Uniswap V3 Swap Event Detector', () => {
           type: FindingType.Info,
           protocol: 'UniswapV3',
           metadata: {
+            poolAddress: mockPoolAddress.toLowerCase(),
             sender: mockSwapEventArgs[0].toString(),
             recipient: mockSwapEventArgs[1].toString(),
             amount0: mockSwapEventArgs[2].toString(),
