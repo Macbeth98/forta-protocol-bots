@@ -5,28 +5,7 @@ export const uniswapV3FactoryAddress = '0x1F98431c8aD98523631AE4a59f267346ea31F9
 
 export const pool_init_hash_code = '0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54';
 
-export const uniswapFactoryABI = [
-  {
-    inputs: [
-      { internalType: 'address', name: '', type: 'address' },
-      { internalType: 'address', name: '', type: 'address' },
-      { internalType: 'uint24', name: '', type: 'uint24' },
-    ],
-    name: 'getPool',
-    outputs: [{ internalType: 'address', name: '', type: 'address' }],
-    stateMutability: 'view',
-    type: 'function',
-  },
-];
-
 export const uniswapPoolABI = [
-  {
-    inputs: [],
-    name: 'factory',
-    outputs: [{ internalType: 'address', name: '', type: 'address' }],
-    stateMutability: 'view',
-    type: 'function',
-  },
   {
     inputs: [],
     name: 'fee',
