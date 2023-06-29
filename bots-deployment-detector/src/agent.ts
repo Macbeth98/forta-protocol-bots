@@ -3,9 +3,9 @@ import { Finding, HandleTransaction, TransactionEvent, FindingSeverity, FindingT
 import {
   nethermindDeployerAddress,
   fortaContractAddress,
-  eventAgentUpdated,
   eventAgentEnabled,
   functionCreateAgent,
+  functionUpdateAgent,
   findingAgentInputs,
   FindingAgentInput,
 } from './utils';
@@ -30,52 +30,31 @@ export function provideHandleTransaction(deployerAddress: string, contractAddres
       return findings;
     }
 
-    const logs = txEvent.filterLog([eventAgentUpdated, eventAgentEnabled], contractAddress);
+    const logs = txEvent.filterLog([eventAgentEnabled], contractAddress);
 
-    const fn = txEvent.filterFunction(functionCreateAgent, contractAddress);
+    const fnLogs = txEvent.filterFunction([functionCreateAgent, functionUpdateAgent], contractAddress);
 
-    const addedCreateFindings: { [key: string]: boolean } = {};
+    fnLogs.forEach((log) => {
+      const { agentId, owner, chainIds } = log.args;
+      const fnName = log.name;
 
-    fn.forEach((item) => {
-      const { agentId, owner, metadata, chainIds } = item.args;
-
-      if (addedCreateFindings[metadata]) return;
-
-      const findingInput = findingAgentInputs.create;
+      const findingInput = fnName === 'createAgent' ? findingAgentInputs.create : findingAgentInputs.update;
       const metadataInput = {
-        by: owner,
+        by: owner ? owner : txEvent.from,
         chainIds: chainIds.map((id: ethers.BigNumber) => id.toString()).join(','),
       };
       findings.push(getFindingObject(findingInput, agentId, metadataInput));
-      addedCreateFindings[metadata] = true;
     });
 
     logs.forEach((log) => {
-      const { agentId, by, chainIds } = log.args;
-      const { name } = log;
+      const { agentId, enabled, permission } = log.args;
 
-      let findingInput: FindingAgentInput;
+      const findingInput: FindingAgentInput = enabled ? findingAgentInputs.enable : findingAgentInputs.disable;
 
-      let metadataInput;
-
-      if (name === 'AgentUpdated') {
-        const metadata = log.args.metadata;
-        if (addedCreateFindings[metadata]) {
-          return;
-        }
-        findingInput = fn.length > 0 ? findingAgentInputs.create : findingAgentInputs.update;
-        metadataInput = {
-          by,
-          chainIds: chainIds.map((id: ethers.BigNumber) => id.toString()).join(','),
-        };
-        addedCreateFindings[metadata] = true;
-      } else {
-        findingInput = log.args.enabled ? findingAgentInputs.enable : findingAgentInputs.disable;
-        metadataInput = {
-          enabled: log.args.enabled.toString(),
-          permission: log.args.permission.toString(),
-        };
-      }
+      const metadataInput = {
+        enabled: enabled.toString(),
+        permission: permission.toString(),
+      };
 
       findings.push(getFindingObject(findingInput, agentId, metadataInput));
     });
