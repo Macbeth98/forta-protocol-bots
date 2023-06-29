@@ -32,7 +32,7 @@ export const isUniswapPoolAddress = async (
 ) => {
   if (poolAddressCache.get(poolAddress)) return poolAddressCache.get(poolAddress);
   const poolValues = await getPoolValues(poolAddress, provider, blockNumber);
-  const computedPoolAddress = await computePoolAddress(factoryAddress, poolValues);
+  const computedPoolAddress = computePoolAddress(factoryAddress, poolValues);
   const isUniswap = computedPoolAddress.toLowerCase() === poolAddress.toLowerCase();
   poolAddressCache.set(poolAddress, isUniswap);
   return isUniswap;
