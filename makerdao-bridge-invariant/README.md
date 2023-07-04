@@ -14,11 +14,75 @@ This Bot detects whenever the Inavariant (L1DAI.balanceOf(L1Escrow) ≥ L2DAI.to
 
 Alerts fired by this Bot
 
-- FORTA-1
-  - Fired when a transaction contains a Tether transfer over 10,000 USDT
-  - Severity is always set to "low" (mention any conditions where it could be something else)
-  - Type is always set to "info" (mention any conditions where it could be something else)
-  - Mention any other type of metadata fields included with this alert
+- L1_ARBITRUM
+
+  - Fired when a transaction contains a DAI outbound transfer to Arbitrum L1 Escrow
+  - Severity is always set to "info"
+  - Type is always set to "info"
+  - Metadata contains:
+    - l1Token: DAI token address on L1 (Ethereum) Chain.
+    - from: Sender of DAI tokens
+    - to: recipient of DAI tokens on L2 chain
+    - sequenceNumber: The sequence number of the transaction on L1 that initiated the deposit
+    - amount: The amount of tokens being transferred
+    - tokenBalance: The DAI token balance of Arbirtum L1 Escrow contract
+    - blockNumber: The block number of the transaction
+
+- L1_OPTIMISM
+
+  - Fired when a transaction contains a DAI outbound transfer to Optimism L1 Escrow
+  - Severity is always set to "info"
+  - Type is always set to "info"
+  - Metadata contains:
+    - l1Token: DAI token address on L1 (Ethereum) Chain.
+    - from: Sender of DAI tokens
+    - to: recipient of DAI tokens on L2 chain
+    - amount: The amount of tokens being transferred
+    - l2Token: DAI token address on Optimism chain
+    - tokenBalance: The DAI token balance of Optimism L1 Escrow contract
+    - blockNumber: The block number of the transaction
+
+- L2_ARBITRUM
+
+  - Fired when a transaction contains a DAI transfer from Null (addr('0x0')) on L2 Arbitrum chain (Mint of DAI)
+  - Severity is always set to "info"
+  - Type is always set to "info"
+  - Metadata contains:
+    - to: The recipient of the DAI tokens
+    - value: The amount of tokens in the transfer
+    - totalSupply: The total supply of DAI tokens on L2 Arbitrum chain
+
+- L2_OPTIMISM
+
+  - Fired when a transaction contains a DAI transfer from Null (addr('0x0')) on L2 Optimism chain (Mint of DAI)
+  - Severity is always set to "info"
+  - Type is always set to "info"
+  - Metadata contains:
+    - to: The recipient of the DAI tokens
+    - value: The amount of tokens in the transfer
+    - totalSupply: The total supply of DAI tokens on L2 Optimism chain
+
+- ARBITRUM_INVARIANT
+
+  - Fired whenever the Inavriant (L1 Escrow >= L2 total Supply) is violated between Arbitrum L1 Escrow and Arbitrum L2 Chain
+  - Severity is always set to "critical"
+  - Type is always set to "exploit"
+  - Metadata contains:
+    - tokenBalance: The DAI token balance of L1 Arbitrum Escrow contract
+    - totalSupply: The total supply of DAI tokens on L2 Arbitrum chain
+    - l1BlockNumber: The Block Number of txn on L1
+    - l2BlockNumber: The Block Number at txn on\
+
+- OPTIMISM_INVARIANT
+
+  - Fired whenever the Inavriant (L1 Escrow >= L2 total Supply) is violated between Optimism L1 Escrow and Optimism L2 Chain
+  - Severity is always set to "critical"
+  - Type is always set to "exploit"
+  - Metadata contains:
+    - tokenBalance: The DAI token balance of L1 Optimism Escrow contract
+    - totalSupply: The total supply of DAI tokens on L2 Optimism chain
+    - l1BlockNumber: The Block Number of txn on L1
+    - l2BlockNumber: The Block Number at txn on L2
 
 ## Test Data
 
@@ -33,4 +97,4 @@ The agent behaviour can be verified with the following transactions:
 ## L2 Chains RPC URL end points
 
 - https://rpc.ankr.com/arbitrum (Arbitrum)
-- https://rpc.ankr.com/optimism (Optimism)
+- https://mainnet.optimism.io (Optimism)
