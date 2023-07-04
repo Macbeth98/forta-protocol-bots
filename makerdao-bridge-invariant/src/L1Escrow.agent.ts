@@ -57,7 +57,7 @@ class L1Escrow {
         if (finding) {
           const tokenBalance = await this.getTokenBalance(txEvent.blockNumber);
           finding.metadata.tokenBalance = getNormalizedAmount(tokenBalance, this.erc20Decimals).toString();
-          finding.metadata.block = JSON.stringify(txEvent.block);
+          finding.metadata.blockNumber = txEvent.block.number.toString();
           findings.push(Finding.from(finding));
         }
       })

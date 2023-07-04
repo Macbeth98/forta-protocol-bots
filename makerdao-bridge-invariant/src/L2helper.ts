@@ -7,12 +7,20 @@ interface NetworkData {
   erc20Address: string;
   alertId: string;
   findingInput: (to: string, value: string, totalSupply: string) => Finding;
+  invariantFinding: (metadata: { [key: string]: string }) => Finding;
 }
+
+const _30Mins = 30 * 60 * 1000;
 
 export const getL1Alerts = async (alertId: string, blockTimestamp: number) => {
   const alerts = await getAlerts({
     botIds: ['0x7041c3cbfa296b42c9bb621ebf332d8faddb4967f9b6e8e7bc538efb0688a941'],
     alertId,
+    first: 1,
+    blockDateRange: {
+      startDate: new Date(blockTimestamp * 1000 - _30Mins),
+      endDate: new Date(blockTimestamp * 1000),
+    },
   });
 
   return alerts;
@@ -50,6 +58,32 @@ export const l2OptimismFinding = (to: string, value: string, totalSupply: string
   });
 };
 
+export const arbitrumInvariantFinding = (metadata: { [key: string]: string }) => {
+  return Finding.fromObject({
+    name: 'Arbitrum Invariant',
+    description:
+      'Detects whenever the Inavriant (L1 Escrow >= L2 total Supply) is violated between Arbitrum L1 Escrow and Arbitrum L2 Chain',
+    alertId: 'ARBITRUM_INVARIANT',
+    protocol: 'Arbitrum: MakerDAO DAI Bridge',
+    severity: FindingSeverity.Critical,
+    type: FindingType.Exploit,
+    metadata: metadata,
+  });
+};
+
+export const optimismInvariantFinding = (metadata: { [key: string]: string }) => {
+  return Finding.fromObject({
+    name: 'Optimism Invariant',
+    description:
+      'Detects whenever the Inavriant (L1 Escrow >= L2 total Supply) is violated between Optimism L1 Escrow and Optimism L2 Chain',
+    alertId: 'OPTIMISM_INVARIANT',
+    protocol: 'Optimism: MakerDAO DAI Bridge',
+    severity: FindingSeverity.Critical,
+    type: FindingType.Exploit,
+    metadata: metadata,
+  });
+};
+
 export const networkData: Record<number, NetworkData> = {
   42161: {
     id: 42161,
@@ -57,6 +91,7 @@ export const networkData: Record<number, NetworkData> = {
     erc20Address: l2ArbitrumDAIAddress,
     alertId: 'L1_ARBITRUM',
     findingInput: l2ArbitrumFinding,
+    invariantFinding: arbitrumInvariantFinding,
   },
   10: {
     id: 10,
@@ -64,5 +99,6 @@ export const networkData: Record<number, NetworkData> = {
     alertId: 'L1_OPTIMISM',
     erc20Address: l2OptimismDAIAddress,
     findingInput: l2OptimismFinding,
+    invariantFinding: optimismInvariantFinding,
   },
 };

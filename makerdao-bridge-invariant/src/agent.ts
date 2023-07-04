@@ -62,41 +62,68 @@ function provideHandleTransaction(provider: ethers.providers.Provider) {
       const tokenAddress = networkManager.get('erc20Address');
       const finding = networkManager.get('findingInput');
       const alertId = networkManager.get('alertId');
+      const invariantFinding = networkManager.get('invariantFinding');
+
+      console.log('Network....', networkManager.get('network'));
 
       const logs = txEvent.filterLog(transferEvent);
 
-      console.log(tokenAddress);
-
       await Promise.all(
         logs.map(async (log) => {
-          if (tokenAddress.toLowerCase() !== log.address.toLowerCase()) {
+          try {
+            if (tokenAddress.toLowerCase() !== log.address.toLowerCase()) {
+              return;
+            }
+
+            const { from, to, value } = log.args as unknown as { from: string; to: string; value: ethers.BigNumber };
+
+            if (from !== createAddress('0x0')) {
+              return;
+            }
+
+            const totalSupply: ethers.BigNumber = await getTokenSupply(
+              tokenAddress,
+              l1DAI_Decimals,
+              [totalSupplyABI],
+              txEvent.blockNumber,
+              provider
+            );
+
+            console.log('TotalSupply...', totalSupply.toString());
+
+            const mintFinding = finding(
+              to,
+              getNormalizedAmount(value, l1DAI_Decimals).toString(),
+              totalSupply.toString()
+            );
+
+            findings.push(mintFinding);
+
+            const blockTimestamp = txEvent.block.timestamp;
+
+            const { alerts } = await getL1Alerts(alertId, blockTimestamp);
+
+            if (alerts.length > 0) {
+              const l1Alert = alerts[0];
+
+              const tokenBalance = ethers.BigNumber.from(l1Alert.metadata.tokenBalance);
+
+              if (tokenBalance.lt(totalSupply)) {
+                const metadata = {
+                  tokenBalance: tokenBalance.toString(),
+                  totalSupply: totalSupply.toString(),
+                  l1BlockNumber: l1Alert.metadata.blockNumber,
+                  l2BlockNumber: txEvent.block.number.toString(),
+                };
+
+                findings.push(invariantFinding(metadata));
+              }
+            }
+          } catch (e) {
+            console.log('Yo in errorrr....');
+            console.log(e);
             return;
           }
-
-          const { from, to, value } = log.args as unknown as { from: string; to: string; value: ethers.BigNumber };
-
-          if (from !== createAddress('0x0')) {
-            return;
-          }
-
-          const totalSupply: ethers.BigNumber = await getTokenSupply(
-            tokenAddress,
-            l1DAI_Decimals,
-            [totalSupplyABI],
-            txEvent.blockNumber,
-            provider
-          );
-
-          const mintFinding = finding(
-            to,
-            getNormalizedAmount(value, l1DAI_Decimals).toString(),
-            totalSupply.toString()
-          );
-
-          findings.push(mintFinding);
-
-          const alerts = await getL1Alerts(alertId, 98765);
-          console.log(alerts);
         })
       );
     }
@@ -105,39 +132,7 @@ function provideHandleTransaction(provider: ethers.providers.Provider) {
   };
 }
 
-const initialize: Initialize = async () => {
-  const BotID = '0x7041c3cbfa296b42c9bb621ebf332d8faddb4967f9b6e8e7bc538efb0688a941';
-  console.log('BotId', BotID);
-
-  return {
-    alertConfig: {
-      subscriptions: [
-        {
-          botId: BotID,
-          alertIds: ['L1_ARBITRUM', 'L1_OPTIMISM'],
-        },
-      ],
-    },
-  };
-};
-
-// const handleBlock: HandleBlock = async (blockEvent: BlockEvent) => {
-//   const findings: Finding[] = [];
-//   // detect some block condition
-//   return findings;
-// }
-
-const handleAlert: HandleAlert = async (alertEvent: AlertEvent) => {
-  const findings: Finding[] = [];
-  // detect some alert condition
-  console.log(alertEvent);
-  return findings;
-};
-
 export default {
   provideHandleTransaction,
-  initialize,
   handleTransaction: provideHandleTransaction(getEthersProvider()),
-  // handleBlock,
-  handleAlert,
 };
