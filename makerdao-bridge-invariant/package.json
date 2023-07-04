@@ -1,8 +1,8 @@
 {
-  "name": "forta-agent-starter",
+  "name": "makedao-bridge-inavriant",
   "version": "0.0.1",
-  "description": "Forta Agent Typescript starter project",
-  "repository": "https://github.com/forta-network/forta-bot-sdk/tree/master/starter-project",
+  "description": "This Bot detects whenever the Inavariant (L1DAI.balanceOf(L1Escrow) ≥ L2DAI.totalSupply()) is violated between L1 Escrow contract and L2 Chains. This Bot also give alerts for every outbound transfer to L1Escrow and an alerts on for every mint of DAI on L2 Chains.",
+  "repository": "https://github.com/Macbeth98/forta-bots/tree/master/makerdao-bridge-invariant",
   "chainIds": [
     1, 42161, 10
   ],
