@@ -1,4 +1,4 @@
-import { Finding, Initialize, HandleAlert, AlertEvent, TransactionEvent, ethers, getEthersProvider } from 'forta-agent';
+import { Finding, TransactionEvent, ethers, getEthersProvider, AlertsResponse } from 'forta-agent';
 import L1Escrow from './L1Escrow.agent';
 
 import {
@@ -14,12 +14,15 @@ import {
   totalSupplyABI,
 } from './config.abi';
 import { arbitrumL1EscrowFinding, optimismL1EscrowFinding } from './l1Findings';
-import { NetworkManager } from 'forta-agent-tools';
+import { NetworkManager, ProviderCache } from 'forta-agent-tools';
 import { createAddress } from 'forta-agent-tools/lib/';
 import { getNormalizedAmount, getTokenSupply } from './utils';
 import { getL1Alerts, networkData } from './L2helper';
 
-function provideHandleTransaction(provider: ethers.providers.Provider) {
+export function provideHandleTransaction(
+  provider: ethers.providers.Provider,
+  getL1Alerts: (alertId: string, blockTimestamp: number) => Promise<AlertsResponse>
+) {
   return async function handleTransaction(txEvent: TransactionEvent) {
     let findings: Finding[] = [];
 
@@ -64,8 +67,6 @@ function provideHandleTransaction(provider: ethers.providers.Provider) {
       const alertId = networkManager.get('alertId');
       const invariantFinding = networkManager.get('invariantFinding');
 
-      console.log('Network....', networkManager.get('network'));
-
       const logs = txEvent.filterLog(transferEvent);
 
       await Promise.all(
@@ -88,8 +89,6 @@ function provideHandleTransaction(provider: ethers.providers.Provider) {
               txEvent.blockNumber,
               provider
             );
-
-            console.log('TotalSupply...', totalSupply.toString());
 
             const mintFinding = finding(
               to,
@@ -119,8 +118,8 @@ function provideHandleTransaction(provider: ethers.providers.Provider) {
                 findings.push(invariantFinding(metadata));
               }
             }
+            return;
           } catch (e) {
-            console.log('Yo in errorrr....');
             console.log(e);
             return;
           }
@@ -134,5 +133,5 @@ function provideHandleTransaction(provider: ethers.providers.Provider) {
 
 export default {
   provideHandleTransaction,
-  handleTransaction: provideHandleTransaction(getEthersProvider()),
+  handleTransaction: provideHandleTransaction(ProviderCache.createProxy(getEthersProvider()), getL1Alerts),
 };

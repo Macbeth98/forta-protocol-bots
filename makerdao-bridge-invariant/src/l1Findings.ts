@@ -32,8 +32,7 @@ export const arbitrumL1EscrowFinding = (
       from: from.toLowerCase(),
       to: to.toLowerCase(),
       sequenceNumber: sequenceNumber.toString(),
-      amount: amount.toString(),
-      normalizedAmount: normalizedAmount.toString(),
+      amount: normalizedAmount.toString(),
     },
   };
 };
@@ -67,8 +66,7 @@ export const optimismL1EscrowFinding = (
       l1Token: _l1Token.toLowerCase(),
       from: _from.toLowerCase(),
       to: _to.toLowerCase(),
-      amount: _amount.toString(),
-      normalizedAmount: normalizedAmount.toString(),
+      amount: normalizedAmount.toString(),
       l2Token: _l2Token.toLowerCase(),
     },
   };
