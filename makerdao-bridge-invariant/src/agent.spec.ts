@@ -1,7 +1,7 @@
 import { Alert, AlertsResponse, Finding, FindingSeverity, FindingType, HandleTransaction, ethers } from 'forta-agent';
 
 import { MockEthersProvider, TestTransactionEvent } from 'forta-agent-tools/lib/test';
-import { provideHandleTransaction } from './agent';
+import { provideHandleTransaction, provideInitialize } from './agent';
 import { createAddress } from 'forta-agent-tools';
 import {
   l1ArbitrumEscrowAddress,
@@ -19,12 +19,20 @@ import {
   transferEvent,
 } from './config.abi';
 import { getNormalizedAmount } from './utils';
-import { arbitrumInvariantFinding, l2ArbitrumFinding, l2OptimismFinding, optimismInvariantFinding } from './L2helper';
+import {
+  arbitrumInvariantFinding,
+  l2ArbitrumFinding,
+  l2OptimismFinding,
+  networkData,
+  optimismInvariantFinding,
+} from './L2helper';
 
 describe("MakerDAO's Bridge Invariant Bot", () => {
   let handleTransaction: HandleTransaction;
 
   let mockProvider: MockEthersProvider;
+
+  let initialize: () => Promise<void>;
 
   const mockRandomAddress = createAddress('0x89');
 
@@ -38,9 +46,12 @@ describe("MakerDAO's Bridge Invariant Bot", () => {
 
   const mockGetAlerts = jest.fn();
 
-  beforeAll(() => {
+  beforeAll(async () => {
     mockProvider = new MockEthersProvider();
     const provider = mockProvider as unknown as ethers.providers.Provider;
+
+    initialize = provideInitialize(provider, networkData);
+
     handleTransaction = provideHandleTransaction(provider, mockGetAlerts);
 
     ItokenBalance = new ethers.utils.Interface([tokenBalanceABI]);
@@ -140,11 +151,13 @@ describe("MakerDAO's Bridge Invariant Bot", () => {
   describe('L1 Escrow Alerts', () => {
     let txEvent: TestTransactionEvent;
 
-    beforeEach(() => {
+    beforeEach(async () => {
       txEvent = new TestTransactionEvent();
       txEvent.setBlock(0);
 
       mockProvider.setNetwork(1);
+
+      await initialize();
 
       mockProvider.setLatestBlock(0);
     });
@@ -203,6 +216,8 @@ describe("MakerDAO's Bridge Invariant Bot", () => {
       async ({ chainId, erc20Address }) => {
         mockProvider.setNetwork(chainId);
 
+        await initialize();
+
         txEvent.setFrom(mockRandomAddress).setTo(erc20Address).setValue('9876554');
 
         const findings = await handleTransaction(txEvent);
@@ -215,6 +230,8 @@ describe("MakerDAO's Bridge Invariant Bot", () => {
       async ({ chainId, erc20Address }) => {
         mockProvider.setNetwork(chainId);
 
+        await initialize();
+
         txEvent.addEventLog(transferEvent, erc20Address, [mockRandomAddress, mockRandomAddress, mockDAIDepositValue]);
 
         const findings = await handleTransaction(txEvent);
@@ -226,6 +243,9 @@ describe("MakerDAO's Bridge Invariant Bot", () => {
       `returns a finding that is a DAI transferEvent and is a Mint`,
       async ({ chainId, erc20Address, mockFinding }) => {
         mockProvider.setNetwork(chainId);
+
+        await initialize();
+
         txEvent.block.timestamp = Date.now() / 1000;
 
         txEvent.addEventLog(transferEvent, erc20Address, [
@@ -262,6 +282,9 @@ describe("MakerDAO's Bridge Invariant Bot", () => {
       `returns a Finding when the L1 Escrow DAI balance is less than L2 $network DAI total Supply`,
       async ({ chainId, erc20Address, mockFinding, mockInvariantFinding }) => {
         mockProvider.setNetwork(chainId);
+
+        await initialize();
+
         txEvent.block.timestamp = Date.now() / 1000;
 
         txEvent.addEventLog(transferEvent, erc20Address, [
