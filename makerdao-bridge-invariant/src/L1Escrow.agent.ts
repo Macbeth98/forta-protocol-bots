@@ -44,14 +44,10 @@ class L1Escrow {
   public async handleTransaction(txEvent: TransactionEvent) {
     const findings: Finding[] = [];
 
-    const logs = txEvent.filterLog(this.eventAbi);
+    const logs = txEvent.filterLog(this.eventAbi, this.gatewayAddress);
 
     await Promise.all(
       logs.map(async (log) => {
-        if (log.address.toLowerCase() !== this.gatewayAddress.toLowerCase()) {
-          return;
-        }
-
         const finding = this.l1Finding(log, this.erc20Address, this.erc20Decimals);
 
         if (finding) {

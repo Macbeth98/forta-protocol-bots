@@ -13,8 +13,7 @@ export type FindingInput = {
 };
 
 export const getNormalizedAmount = (amount: ethers.BigNumber, decimals: number) => {
-  const divValue =
-    decimals > 12 ? ethers.BigNumber.from(10 ** 12).mul(10 ** (decimals - 12)) : ethers.BigNumber.from(10 ** decimals);
+  const divValue = ethers.BigNumber.from((10 ** decimals).toString());
   return amount.div(divValue);
 };
 

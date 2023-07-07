@@ -17,7 +17,11 @@ import { arbitrumL1EscrowFinding, optimismL1EscrowFinding } from './l1Findings';
 import { NetworkManager, ProviderCache } from 'forta-agent-tools';
 import { createAddress } from 'forta-agent-tools/lib/';
 import { getNormalizedAmount, getTokenSupply } from './utils';
-import { getL1Alerts, networkData } from './L2helper';
+import { NetworkData, getL1Alerts, networkData } from './L2helper';
+
+let networkManager: NetworkManager<NetworkData>;
+
+const provider: ethers.providers.Provider = ProviderCache.createProxy(getEthersProvider());
 
 export function provideHandleTransaction(
   provider: ethers.providers.Provider,
@@ -58,16 +62,16 @@ export function provideHandleTransaction(
         ])
       ).flat();
     } else {
-      const networkManager = new NetworkManager(networkData);
-
-      await networkManager.init(provider);
-
       const tokenAddress = networkManager.get('erc20Address');
       const finding = networkManager.get('findingInput');
       const alertId = networkManager.get('alertId');
       const invariantFinding = networkManager.get('invariantFinding');
 
       const logs = txEvent.filterLog(transferEvent);
+
+      if (finding === undefined || invariantFinding === undefined) {
+        return findings;
+      }
 
       await Promise.all(
         logs.map(async (log) => {
@@ -131,7 +135,17 @@ export function provideHandleTransaction(
   };
 }
 
+export function provideInitialize(provider: ethers.providers.Provider, networkData: Record<number, NetworkData>) {
+  return async function initialize() {
+    networkManager = new NetworkManager(networkData);
+
+    await networkManager.init(provider);
+  };
+}
+
 export default {
+  provideInitialize,
+  initialize: provideInitialize(provider, networkData),
   provideHandleTransaction,
-  handleTransaction: provideHandleTransaction(ProviderCache.createProxy(getEthersProvider()), getL1Alerts),
+  handleTransaction: provideHandleTransaction(provider, getL1Alerts),
 };

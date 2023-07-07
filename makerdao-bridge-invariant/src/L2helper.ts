@@ -1,13 +1,13 @@
 import { Finding, FindingSeverity, FindingType, getAlerts } from 'forta-agent';
-import { l2ArbitrumDAIAddress, l2OptimismDAIAddress } from './config.abi';
+import { l1DAIAddress, l2ArbitrumDAIAddress, l2OptimismDAIAddress } from './config.abi';
 
-interface NetworkData {
+export interface NetworkData {
   id: number;
   network: string;
   erc20Address: string;
   alertId: string;
-  findingInput: (to: string, value: string, totalSupply: string) => Finding;
-  invariantFinding: (metadata: { [key: string]: string }) => Finding;
+  findingInput?: (to: string, value: string, totalSupply: string) => Finding;
+  invariantFinding?: (metadata: { [key: string]: string }) => Finding;
 }
 
 const _30Mins = 30 * 60 * 1000;
@@ -85,6 +85,12 @@ export const optimismInvariantFinding = (metadata: { [key: string]: string }) =>
 };
 
 export const networkData: Record<number, NetworkData> = {
+  1: {
+    id: 1,
+    network: 'Ethereum',
+    erc20Address: l1DAIAddress,
+    alertId: '',
+  },
   42161: {
     id: 42161,
     network: 'Arbitrum',
