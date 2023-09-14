@@ -2,7 +2,7 @@
 
 ## Description
 
-This Bot detects at any time if the Compound protcol reserves are less than the target Reserves. This helps to know when the buyCollateralReserves method will be successfull. The Bot also tracks when the govenor withdraw Reserves from the protocol or gives an approval to a manager for an asset.
+This Bot detects at any time if the Compound protcol reserves are less than the `target` _Reserves_. This helps to know when the `buyCollateralReserves` method will be successfull. The Bot also tracks when the _`governor withdraw Reserves`_ from the protocol or gives an approval to a manager for an asset.
 
 ## Supported Chains
 
