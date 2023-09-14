@@ -16,7 +16,7 @@ A suite of forta-agents built using `Forta-Typescript-SDK` that track or a monit
 #### MakerDAO
 
 - This bot focuses on the DAI bridge-invariant of MakerDAO protocol.
-- This Bot detects whenever the Inavariant (L1DAI.balanceOf(L1Escrow) ≥ L2DAI.totalSupply()) is violated between L1 Escrow contract and L2 Chains.
+- This Bot detects whenever the Inavariant `(L1DAI.balanceOf(L1Escrow) ≥ L2DAI.totalSupply())` is violated between L1 Escrow contract and L2 Chains.
 - This Bot also give alerts for every outbound transfer to L1Escrow and an alerts on for every mint of DAI on L2 Chains.
 - **_Supported Chains_**: Ethereum, Arbitrum, Optimism
 

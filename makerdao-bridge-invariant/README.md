@@ -2,7 +2,7 @@
 
 ## Description
 
-This Bot detects whenever the Inavariant (L1DAI.balanceOf(L1Escrow) ≥ L2DAI.totalSupply()) is violated between L1 Escrow contract and L2 Chains. This Bot also give alerts for every outbound transfer to L1Escrow and an alerts on for every mint of DAI on L2 Chains.
+This Bot detects whenever the Inavariant `(L1DAI.balanceOf(L1Escrow) ≥ L2DAI.totalSupply())` is violated between L1 Escrow contract and L2 Chains. This Bot also give alerts for every outbound transfer to L1Escrow and an alerts on for every mint of DAI on L2 Chains.
 
 ## Supported Chains
 
